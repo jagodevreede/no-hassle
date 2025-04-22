@@ -4,9 +4,12 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 /**
  * This is filled in memory for demo purpose only.
  */
+@Component
 public class MemeTextRepository {
     private static final Map<UUID, MemeText> DATABASE = initDB();
 
