@@ -1,12 +1,11 @@
 package io.github.jagodevreede.demo.views.masterdetail;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -21,49 +20,43 @@ import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
-import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
-import io.github.jagodevreede.demo.data.SamplePerson;
-import io.github.jagodevreede.demo.services.SamplePersonService;
+import io.github.jagodevreede.demo.nohassle.text.MemeText;
+import io.github.jagodevreede.demo.nohassle.text.MemeTextRepository;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
 
-@PageTitle("Master-Detail")
-@Route("master-detail/:samplePersonID?/:action?(edit)")
+@PageTitle("Meme text")
+@Route("master-detail/:MemeTextID?/:action?(edit)")
 @Menu(order = 1, icon = LineAwesomeIconUrl.COLUMNS_SOLID)
 @Uses(Icon.class)
 public class MasterDetailView extends Div implements BeforeEnterObserver {
 
-    private final String SAMPLEPERSON_ID = "samplePersonID";
-    private final String SAMPLEPERSON_EDIT_ROUTE_TEMPLATE = "master-detail/%s/edit";
+    private final String MemeText_ID = "MemeTextID";
+    private final String MemeText_EDIT_ROUTE_TEMPLATE = "master-detail/%s/edit";
 
-    private final Grid<SamplePerson> grid = new Grid<>(SamplePerson.class, false);
+    private final Grid<MemeText> grid = new Grid<>(MemeText.class, false);
 
-    private TextField firstName;
-    private TextField lastName;
-    private TextField email;
-    private TextField phone;
-    private DatePicker dateOfBirth;
-    private TextField occupation;
-    private TextField role;
-    private Checkbox important;
+    private TextField upperText;
+    private TextField lowerText;
+    private TextField imageId;
 
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
 
-    private final BeanValidationBinder<SamplePerson> binder;
+    private final BeanValidationBinder<MemeText> binder;
 
-    private SamplePerson samplePerson;
+    private MemeText memeText;
 
-    private final SamplePersonService samplePersonService;
+    private final MemeTextRepository memeTextRepository;
 
-    public MasterDetailView(SamplePersonService samplePersonService) {
-        this.samplePersonService = samplePersonService;
+    public MasterDetailView(MemeTextRepository memeTextRepository) {
+        this.memeTextRepository = memeTextRepository;
         addClassNames("master-detail-view");
 
         // Create UI
@@ -75,30 +68,20 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn("firstName").setAutoWidth(true);
-        grid.addColumn("lastName").setAutoWidth(true);
-        grid.addColumn("email").setAutoWidth(true);
-        grid.addColumn("phone").setAutoWidth(true);
-        grid.addColumn("dateOfBirth").setAutoWidth(true);
-        grid.addColumn("occupation").setAutoWidth(true);
-        grid.addColumn("role").setAutoWidth(true);
-        LitRenderer<SamplePerson> importantRenderer = LitRenderer.<SamplePerson>of(
-                        "<vaadin-icon icon='vaadin:${item.icon}' style='width: var(--lumo-icon-size-s); height: var(--lumo-icon-size-s); color: ${item.color};"
-                                + "'></vaadin-icon>")
-                .withProperty("icon", important -> important.isImportant() ? "check" : "minus").withProperty("color",
-                        important -> important.isImportant()
-                                ? "var(--lumo-primary-text-color)"
-                                : "var(--lumo-disabled-text-color)");
+        grid.addColumn("upperText").setAutoWidth(true);
+        grid.addColumn("lowerText").setAutoWidth(true);
+        grid.addColumn("imageId").setAutoWidth(true);
 
-        grid.addColumn(importantRenderer).setHeader("Important").setAutoWidth(true);
-
-        grid.setItems(query -> samplePersonService.list(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
+        grid.setItems(query -> {
+            var pageRequest = VaadinSpringDataHelpers.toSpringPageRequest(query);
+            return memeTextRepository.findAll().stream();
+        });
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
-                UI.getCurrent().navigate(String.format(SAMPLEPERSON_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
+                UI.getCurrent().navigate(String.format(MemeText_EDIT_ROUTE_TEMPLATE, event.getValue().id()));
             } else {
                 clearForm();
                 UI.getCurrent().navigate(MasterDetailView.class);
@@ -106,7 +89,7 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
         });
 
         // Configure Form
-        binder = new BeanValidationBinder<>(SamplePerson.class);
+        binder = new BeanValidationBinder<>(MemeText.class);
 
         // Bind fields. This is where you'd define e.g. validation rules
 
@@ -119,11 +102,11 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
 
         save.addClickListener(e -> {
             try {
-                if (this.samplePerson == null) {
-                    this.samplePerson = new SamplePerson();
+                if (this.memeText == null) {
+                    this.memeText = new MemeText(UUID.randomUUID(), "", "", "");
                 }
-                binder.writeBean(this.samplePerson);
-                samplePersonService.save(this.samplePerson);
+                binder.writeBean(this.memeText);
+                memeTextRepository.save(this.memeText);
                 clearForm();
                 refreshGrid();
                 Notification.show("Data updated");
@@ -141,14 +124,14 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        Optional<Long> samplePersonId = event.getRouteParameters().get(SAMPLEPERSON_ID).map(Long::parseLong);
-        if (samplePersonId.isPresent()) {
-            Optional<SamplePerson> samplePersonFromBackend = samplePersonService.get(samplePersonId.get());
-            if (samplePersonFromBackend.isPresent()) {
-                populateForm(samplePersonFromBackend.get());
+        Optional<String> memeTextId = event.getRouteParameters().get(MemeText_ID);
+        if (memeTextId.isPresent()) {
+            Optional<MemeText> memeTextFromBackend = Optional.ofNullable(memeTextRepository.findById(UUID.fromString(memeTextId.get())));
+            if (memeTextFromBackend.isPresent()) {
+                populateForm(memeTextFromBackend.get());
             } else {
                 Notification.show(
-                        String.format("The requested samplePerson was not found, ID = %s", samplePersonId.get()), 3000,
+                        String.format("The requested MemeText was not found, ID = %s", memeTextId.get()), 3000,
                         Position.BOTTOM_START);
                 // when a row is selected but the data is no longer available,
                 // refresh grid
@@ -167,15 +150,11 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        firstName = new TextField("First Name");
-        lastName = new TextField("Last Name");
-        email = new TextField("Email");
-        phone = new TextField("Phone");
-        dateOfBirth = new DatePicker("Date Of Birth");
-        occupation = new TextField("Occupation");
-        role = new TextField("Role");
-        important = new Checkbox("Important");
-        formLayout.add(firstName, lastName, email, phone, dateOfBirth, occupation, role, important);
+        upperText = new TextField("Upper text");
+        lowerText = new TextField("Lower text");
+        imageId = new TextField("imageId");
+
+        formLayout.add(upperText, lowerText, imageId);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -208,9 +187,9 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
         populateForm(null);
     }
 
-    private void populateForm(SamplePerson value) {
-        this.samplePerson = value;
-        binder.readBean(this.samplePerson);
+    private void populateForm(MemeText value) {
+        this.memeText = value;
+        binder.readBean(this.memeText);
 
     }
 }
