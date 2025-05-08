@@ -1,5 +1,7 @@
 package io.github.jagodevreede.demo.nohassle.text;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -7,6 +9,7 @@ import java.util.stream.Collectors;
 /**
  * This is filled in memory for demo purpose only.
  */
+@ApplicationScoped
 public class MemeTextRepository {
     private static final Map<UUID, MemeText> DATABASE = initDB();
 
