@@ -27,7 +27,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import com.vaadin.flow.theme.lumo.LumoUtility.TextColor;
 import com.vaadin.flow.theme.lumo.LumoUtility.Whitespace;
 import com.vaadin.flow.theme.lumo.LumoUtility.Width;
-import io.github.jagodevreede.demo.views.helloworld.HelloWorldView;
+import io.github.jagodevreede.demo.views.helloworld.CreateView;
 import io.github.jagodevreede.demo.views.masterdetail.MasterDetailView;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
@@ -104,7 +104,7 @@ public class MainLayout extends AppLayout {
 
     private MenuItemInfo[] createMenuItems() {
         return new MenuItemInfo[] { //
-                new MenuItemInfo("Hello World", LineAwesomeIcon.GLOBE_SOLID.create(), HelloWorldView.class), //
+                new MenuItemInfo("Create", LineAwesomeIcon.GLOBE_SOLID.create(), CreateView.class), //
 
                 new MenuItemInfo("Master-Detail", LineAwesomeIcon.COLUMNS_SOLID.create(), MasterDetailView.class), //
 

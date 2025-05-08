@@ -1,20 +1,21 @@
 package io.github.jagodevreede.demo.nohassle.image;
 
+import io.github.jagodevreede.demo.nohassle.text.MemeTextRepository;
+import org.springframework.stereotype.Component;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.imageio.ImageIO;
-
-import io.github.jagodevreede.demo.nohassle.text.MemeTextRepository;
 
 /**
  * This is filled in memory for demo purpose only.
  */
+@Component
 public class MemeImageRepository {
     private static final Map<String, MemeImage> DATABASE = initDB();
 
