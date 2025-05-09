@@ -1,0 +1,8 @@
+{#for meme in memes}
+    <tr hx-get="/memes/{meme.id}" hx-target="#detail-view" hx-swap="outerHTML">
+        <td>{meme.id}</td>
+        <td>{meme.upperText}</td>
+        <td>{meme.lowerText}</td>
+        <td>{meme.imageId}</td>
+    </tr>
+{/for}
