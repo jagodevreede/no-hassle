@@ -34,7 +34,9 @@
                 </div>
                 <div class="mb-3">
                     <label for="imageId" class="form-label">Image ID</label>
-                    <input type="text" class="form-control" name="imageId" id="imageId" placeholder="Enter image ID">
+                    <select class="form-select" name="imageId" id="imageId" hx-get="/memes/comboBox" hx-trigger="load" hx-target="this" hx-swap="innerHTML">
+                        <!-- Options will be dynamically loaded here -->
+                    </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Create Meme</button>
             </form>
