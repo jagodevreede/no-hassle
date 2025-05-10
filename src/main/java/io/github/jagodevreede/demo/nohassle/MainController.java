@@ -74,6 +74,19 @@ public class MainController {
     }
 
     public void handleCreateMeme(ActionEvent actionEvent) {
+        String upperText = upperTextField.getText();
+        String lowerText = lowerTextField.getText();
+        String imageId = imageIdComboBox.getValue();
+
+        if (upperText.isEmpty() || lowerText.isEmpty() || imageId == null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Not all fields are filled in");
+            alert.showAndWait();
+            return;
+        }
+
+        MemeText memeText = new MemeText(UUID.randomUUID(), upperText, lowerText, imageId);
+        memeTextRepository.save(memeText);
+        updateTable();
     }
 
     private static Image toFXImage(BufferedImage bufferedImage) {
