@@ -23,7 +23,7 @@
     <div class="tab-content mt-3">
         <!-- Create Tab -->
         <div class="tab-pane fade show active" id="create" role="tabpanel">
-            <form>
+            <form hx-post="/memes" hx-trigger="submit" hx-target="body" class="needs-validation">
                 <div class="mb-3">
                     <label for="upperText" class="form-label">Upper Text</label>
                     <input type="text" class="form-control" name="upperText" id="upperText" placeholder="Enter upper text" required>
