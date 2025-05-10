@@ -1,5 +1,6 @@
 package io.github.jagodevreede.demo.nohassle;
 
+import io.github.jagodevreede.demo.nohassle.generator.MemeGenerator;
 import io.github.jagodevreede.demo.nohassle.image.MemeImage;
 import io.github.jagodevreede.demo.nohassle.image.MemeImageRepository;
 import io.github.jagodevreede.demo.nohassle.text.MemeText;
@@ -54,6 +55,14 @@ public class MainController {
         upperTextColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().upperText()));
         lowerTextColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().lowerText()));
         imageIdColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().imageId()));
+
+        memeTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                BufferedImage image = memeImageRepository.findById(newVal.imageId()).imageData();
+                BufferedImage generatedMeme = MemeGenerator.generateMeme(image, newVal.upperText(), newVal.lowerText());
+                memeImage.setImage(toFXImage(generatedMeme));
+            }
+        });
 
         updateTable();
     }
