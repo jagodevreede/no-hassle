@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="432.0" prefWidth="954.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21" fx:controller="io.github.jagodevreede.demo.nohassle.MainController">
+    <center>
+        <VBox spacing="10">
+            <TabPane>
+                <!-- Create Tab -->
+                <Tab text="Create">
+                    <VBox spacing="10">
+                        <padding>
+                            <Insets bottom="10" left="10" right="10" top="10" />
+                        </padding>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints halignment="RIGHT" minWidth="100" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+
+                            <Label text="Upper Text:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                            <TextField fx:id="upperTextField" promptText="Enter upper text" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                            <Label text="Lower Text:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                            <TextField fx:id="lowerTextField" promptText="Enter lower text" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                            <Label text="Image ID:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                            <ComboBox fx:id="imageIdComboBox" promptText="Select image ID" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                     <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                     </rowConstraints>
+                        </GridPane>
+
+                        <Button onAction="#handleCreateMeme" text="Create Meme" />
+                    </VBox>
+                </Tab>
+
+                <!-- Browse Tab -->
+                <Tab text="Browse">
+                    <SplitPane dividerPositions="0.8" orientation="HORIZONTAL">
+                        <!-- Left: Table -->
+                        <VBox>
+                            <TableView fx:id="memeTable">
+                                <columns>
+                                    <TableColumn fx:id="idColumn" text="ID" />
+                                    <TableColumn fx:id="upperTextColumn" text="Upper Text" />
+                                    <TableColumn fx:id="lowerTextColumn" text="Lower Text" />
+                                    <TableColumn fx:id="imageIdColumn" text="Image ID" />
+                                </columns>
+                            </TableView>
+                        </VBox>
+
+                        <!-- Right: Detail View -->
+                        <VBox spacing="10">
+                            <padding>
+                                <Insets bottom="10" left="10" right="10" top="10" />
+                            </padding>
+                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Detail View" />
+                            <ImageView fx:id="memeImage" fitHeight="200" fitWidth="300" preserveRatio="true" />
+                        </VBox>
+                    </SplitPane>
+                </Tab>
+            </TabPane>
+        </VBox>
+    </center>
+</BorderPane>
