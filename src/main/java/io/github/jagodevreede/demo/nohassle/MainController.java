@@ -1,18 +1,18 @@
 package io.github.jagodevreede.demo.nohassle;
 
+import io.github.jagodevreede.demo.nohassle.image.MemeImage;
 import io.github.jagodevreede.demo.nohassle.image.MemeImageRepository;
 import io.github.jagodevreede.demo.nohassle.text.MemeText;
 import io.github.jagodevreede.demo.nohassle.text.MemeTextRepository;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.UUID;
 
 public class MainController {
 
@@ -47,11 +48,20 @@ public class MainController {
 
     @FXML
     public void initialize() {
+        imageIdComboBox.getItems().addAll(memeImageRepository.findAll().stream().map(MemeImage::id).toList());
+        // Initialize the table columns
+        idColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().id().toString()));
+        upperTextColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().upperText()));
+        lowerTextColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().lowerText()));
+        imageIdColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().imageId()));
+
         updateTable();
     }
 
     private void updateTable() {
-
+        memeTable.setItems(FXCollections.observableArrayList(
+                memeTextRepository.findAll()
+        ));
     }
 
     public void handleCreateMeme(ActionEvent actionEvent) {
